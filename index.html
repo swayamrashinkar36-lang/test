@@ -1,0 +1,1798 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Void Tech </title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/gif" href="https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lobster&family=Poppins:wght@700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Background - Color fallback */
+        .custom-bg {
+            background-color: #0f111a;
+        }
+
+        /* Background Video */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Overlay - Highly Transparent for Video Visibility */
+        .bg-overlay {
+            background: linear-gradient(to bottom, rgba(15, 17, 26, 0.4), rgba(15, 17, 26, 0.85));
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+        
+        /* Glassmorphism - Ultra Premium & Transparent */
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Navbar Specific Glass */
+        .nav-glass {
+            background: rgba(15, 17, 26, 0.2);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+        .nav-btn-active {
+            background: rgba(34, 211, 238, 0.15);
+            color: #22d3ee;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        
+        .cmd-item:hover { background: rgba(255, 255, 255, 0.1); }
+
+        /* Modal Animation */
+        .modal-enter { animation: modalIn 0.3s ease-out forwards; }
+        .modal-exit { animation: modalOut 0.2s ease-in forwards; }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes modalOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+    </style>
+</head>
+<body class="custom-bg text-white h-screen overflow-hidden selection:bg-cyan-500 selection:text-black relative">
+
+    <!-- Background Video -->
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="Zenitsu.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="bg-overlay"></div>
+
+    <!-- USER PROFILE MODAL -->
+    <div id="user-modal-backdrop" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm flex items-center justify-center p-4 transition-opacity" onclick="closeUserModal()">
+        <div id="user-modal" class="glass-panel w-full max-w-md rounded-2xl overflow-hidden shadow-2xl transform transition-all" onclick="event.stopPropagation()">
+            <!-- Header/Banner -->
+            <div class="h-24 bg-gradient-to-r from-cyan-600/80 to-blue-700/80 relative backdrop-blur-md">
+                <button onclick="closeUserModal()" class="absolute top-3 right-3 text-white/80 hover:text-white bg-black/20 hover:bg-black/40 rounded-full p-1.5 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- Content -->
+            <div class="px-6 pb-6 relative">
+                <!-- Avatar -->
+                <div class="relative -mt-12 mb-4">
+                    <img id="modal-avatar" src="" class="w-24 h-24 rounded-full border-4 border-[#1e293b]/50 shadow-xl object-cover bg-gray-800">
+                    <div id="modal-status-indicator" class="absolute bottom-1 right-1 w-6 h-6 rounded-full border-4 border-[#1e293b] bg-gray-500"></div>
+                </div>
+                
+                <!-- User Info -->
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <h2 id="modal-username" class="text-2xl font-bold text-white">Username</h2>
+                        <span id="modal-role-badge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gray-700/50 text-gray-300 border border-white/10">Member</span>
+                    </div>
+                    <p id="modal-status-text" class="text-sm text-gray-400 font-medium">Offline</p>
+                </div>
+
+                <!-- Divider -->
+                <div class="h-px bg-white/10 my-4"></div>
+
+                <!-- Details -->
+                <div class="space-y-3">
+                    <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                        <p class="text-xs text-gray-500 uppercase font-bold mb-1">Playing</p>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-cyan-500"></i>
+                            <span id="modal-game" class="text-sm text-gray-200">No active game</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                            <p class="text-xs text-gray-500 uppercase font-bold mb-1">User ID</p>
+                            <span id="modal-userid" class="text-xs font-mono text-gray-400 select-all">Loading...</span>
+                        </div>
+                        <div class="bg-white/5 rounded-lg p-3 border border-white/5">
+                            <p class="text-xs text-gray-500 uppercase font-bold mb-1">Joined</p>
+                            <span class="text-xs text-gray-400">VoidTech</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="closeUserModal()" class="w-full mt-6 bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg font-medium transition-colors text-sm border border-white/5">
+                    Close Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="flex h-screen flex-col relative z-10 w-full">
+        
+        <!-- NAVBAR -->
+        <header class="nav-glass h-16 md:h-20 flex items-center justify-between px-4 md:px-8 shrink-0 z-50 transition-all">
+            <!-- Left: Logo -->
+            <div class="flex items-center gap-3">
+                <div class="relative shrink-0 cursor-pointer hover:scale-105 transition-transform">
+                    <img src="https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif" class="w-8 h-8 md:w-10 md:h-10 rounded-full ring-2 ring-cyan-500/50 shadow-lg shadow-cyan-500/20">
+                    <div class="absolute bottom-0 right-0 w-2.5 h-2.5 md:w-3 md:h-3 bg-green-500 rounded-full border-2 border-[#0f111a]"></div>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base md:text-lg tracking-wide text-white drop-shadow-md">VoidTech</h1>
+                    <span class="hidden sm:inline-block text-[10px] text-gray-300 uppercase tracking-wider bg-white/10 border border-white/10 px-2 py-0.5 rounded backdrop-blur-sm">Dashboard</span>
+                </div>
+            </div>
+
+            <!-- Center: Desktop Navigation (Auto-Sizing) -->
+            <nav class="hidden md:flex items-center gap-1 bg-black/20 rounded-full p-1 border border-white/10 backdrop-blur-xl shadow-lg">
+                <button onclick="switchTab('home')" id="btn-home" class="nav-btn nav-btn-active px-3 lg:px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-house text-xs"></i> <span class="hidden lg:inline">Home</span>
+                </button>
+                <button onclick="switchTab('team')" id="btn-team" class="nav-btn text-gray-300 hover:text-white hover:bg-white/10 px-3 lg:px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-xs"></i> <span class="hidden lg:inline">Team</span>
+                </button>
+
+                </button>
+                <button onclick="switchTab('commands')" id="btn-commands" class="nav-btn text-gray-300 hover:text-white hover:bg-white/10 px-3 lg:px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-xs"></i> <span class="hidden lg:inline">Commands</span>
+                </button>
+                <button onclick="switchTab('analytics')" id="btn-analytics" class="nav-btn text-gray-300 hover:text-white hover:bg-white/10 px-3 lg:px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-xs"></i> <span class="hidden lg:inline">Stats</span>
+                </button>
+                <button onclick="switchTab('projects')" id="btn-projects" class="nav-btn text-gray-300 hover:text-white hover:bg-white/10 px-3 lg:px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-rocket text-xs"></i> <span class="hidden lg:inline">Tools</span>
+                </button>
+
+                </button>
+                <button onclick="switchTab('about')" id="btn-about" class="nav-btn text-gray-300 hover:text-white hover:bg-white/10 px-3 lg:px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-xs"></i> <span class="hidden lg:inline">About</span>
+                </button>
+            </nav>
+
+            <!-- Right: Profile & Mobile Toggle -->
+            <div class="flex items-center gap-3">
+                <!-- User Profile Pill -->
+                <div class="hidden sm:flex items-center gap-3 pl-1 pr-3 py-1 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full transition-colors cursor-pointer backdrop-blur-md" onclick="openUserModal('owner', {name: 'VoidTech', role: 'Owner', status: 'Do Not Disturb', game: 'VS Code', id: '123456789', avatar: 'https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif', roleColor: 'bg-yellow-500', roleText: 'text-yellow-500'})">
+                    <img src="https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif" class="w-8 h-8 rounded-full border border-gray-600">
+                    <div class="flex flex-col leading-tight">
+                        <span class="text-xs font-bold text-white">VoidTech</span>
+                        <span class="text-[10px] text-cyan-400">Owner</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-colors backdrop-blur-md">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-[#0f111a]/80 backdrop-blur-2xl border-b border-white/10 z-40 p-4 shadow-2xl transition-all duration-300 origin-top transform scale-y-0 opacity-0">
+            <div class="flex flex-col space-y-1">
+                <button onclick="switchTab('home')" id="btn-home-m" class="text-left px-4 py-3 rounded-lg text-sm font-medium bg-cyan-600/20 text-cyan-400 border border-cyan-600/30 flex items-center gap-3">
+                    <i class="fa-solid fa-house w-5 text-center"></i> Home
+                </button>
+                <button onclick="switchTab('team')" id="btn-team-m" class="text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-colors flex items-center gap-3">
+                    <i class="fa-solid fa-users w-5 text-center"></i> Team
+                </button>
+
+                <button onclick="switchTab('commands')" id="btn-commands-m" class="text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-colors flex items-center gap-3">
+                    <i class="fa-solid fa-terminal w-5 text-center"></i> Commands
+                </button>
+                <button onclick="switchTab('analytics')" id="btn-analytics-m" class="text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-colors flex items-center gap-3">
+                    <i class="fa-solid fa-chart-pie w-5 text-center"></i> Analytics
+                </button>
+                <button onclick="switchTab('projects')" id="btn-projects-m" class="text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-colors flex items-center gap-3">
+                    <i class="fa-solid fa-rocket w-5 text-center"></i> Projects
+                </button>
+
+                <button onclick="switchTab('about')" id="btn-about-m" class="text-left px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition-colors flex items-center gap-3">
+                    <i class="fa-solid fa-circle-info w-5 text-center"></i> About
+                </button>
+            </div>
+            <!-- Mobile User Profile Info -->
+            <div class="mt-4 pt-4 border-t border-white/10 flex items-center gap-3 px-2">
+                <img src="https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif" class="w-10 h-10 rounded-full border border-gray-600">
+                <div>
+                    <div class="text-sm font-bold text-white">VoidTech</div>
+                    <div class="text-xs text-gray-400">Logged in as Owner</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto scroll-smooth w-full relative">
+            
+            <div id="tab-home" class="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/10 pb-4">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white drop-shadow-sm">Dashboard</h2>
+                        <p class="text-gray-300 text-sm">Welcome back, Commander.</p>
+                    </div>
+                    <div class="px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30 flex items-center gap-2 backdrop-blur-sm">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs text-green-400 font-bold">ONLINE</span>
+                    </div>
+                </div>
+
+                <!-- CMD Tool -->
+                <div class="glass-panel p-5 sm:p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                    
+                    <div class="relative z-10 text-center max-w-2xl mx-auto">
+                        <div class="inline-block px-3 py-1 mb-4 text-[10px] sm:text-xs font-bold tracking-wider text-cyan-400 uppercase bg-cyan-500/10 rounded-full border border-cyan-500/20 backdrop-blur-sm">
+                            Automated Script
+                        </div>
+                        <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">
+                            ALL IN ONE <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">CMD</span>
+                        </h1>
+                        <p class="text-gray-300 mb-6 text-sm sm:text-base px-2 drop-shadow-md">Execute the master script to install all dependencies instantly.</p>
+                        
+                        <div class="flex items-center bg-black/40 border border-white/10 rounded-lg p-2 max-w-lg mx-auto hover:border-cyan-500/50 transition-colors w-full backdrop-blur-sm">
+                            <span class="px-3 text-cyan-500 select-none hidden sm:block">$</span>
+                            <input type="text" id="cmdInput" value="bash <(curl -sL https://code.voidtech.qzz.io)" readonly class="bg-transparent flex-1 outline-none text-gray-200 font-mono text-xs sm:text-sm w-full min-w-0">
+                            <button onclick="copyCmd()" class="bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-2 rounded-md text-xs font-bold transition-all ml-2 whitespace-nowrap shrink-0 border border-white/5">
+                                COPY
+                            </button>
+                        </div>
+                        <p id="toast" class="mt-2 text-green-400 text-xs opacity-0 transition-opacity font-bold drop-shadow-md">Copied to clipboard!</p>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Left Column (WidgetBot - Now Larger) -->
+                    <div class="lg:col-span-2 h-[500px] lg:h-auto lg:min-h-[550px]">
+                        <div class="glass-panel h-full rounded-xl overflow-hidden flex flex-col">
+                            <div class="bg-black/40 px-4 py-2 border-b border-white/10 flex justify-between items-center shrink-0 backdrop-blur-md">
+                                <span class="text-xs font-bold text-gray-300">LIVE CHAT</span>
+                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            </div>
+                            <widgetbot
+                                server="1472954077099855978"
+                                channel="1487480569062232065"
+                                width="100%"
+                                height="100%"
+                                class="flex-1"
+                            ></widgetbot>
+                        </div>
+                    </div>
+
+                    <!-- Right Column (Main Content - Now Smaller) -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <!-- Socials -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                            <a href="https://youtube.com/@VoidTechHub
+" target="_blank" class="glass-panel p-4 rounded-xl flex items-center gap-4 hover:bg-white/10 transition-all border-l-4 border-red-600">
+                                <div class="w-12 h-12 rounded-full bg-red-600/20 flex items-center justify-center text-red-500 shrink-0"><i class="fa-brands fa-youtube text-xl"></i></div>
+                                <div class="min-w-0"><h4 class="font-bold truncate text-white">YouTube</h4><p class="text-xs text-gray-300 truncate">Tutorials</p></div>
+
+                            </a>
+                            <a href="https://discord.gg/wvtSy63Daz" target="_blank" class="glass-panel p-4 rounded-xl flex items-center gap-4 hover:bg-white/10 transition-all border-l-4 border-indigo-500 sm:col-span-2 lg:col-span-1">
+                                <div class="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-500 shrink-0"><i class="fa-brands fa-discord text-xl"></i></div>
+                                <div class="flex-1 min-w-0"><h4 class="font-bold truncate text-white">Discord Community</h4><p class="text-xs text-gray-300 truncate">Join the server</p></div>
+                                <span class="bg-indigo-600 px-3 py-1 rounded text-xs font-bold shrink-0">Join</span>
+                            </a>
+                        </div>
+
+                        <!-- Live Stats -->
+                        <div class="glass-panel p-4 sm:p-6 rounded-xl relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-transparent pointer-events-none"></div>
+                            <h3 class="text-sm font-bold text-gray-300 uppercase mb-4 flex items-center gap-2">
+                                System Status <span class="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                            </h3>
+                            <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center divide-x divide-white/10">
+                                <div>
+                                    <div class="text-[10px] sm:text-xs text-gray-400">Latency</div>
+                                    <div id="live-latency" class="text-sm sm:text-xl font-mono font-bold text-green-400 drop-shadow-sm">24ms</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] sm:text-xs text-gray-400">Uptime</div>
+                                    <div class="text-sm sm:text-xl font-mono font-bold text-blue-400 drop-shadow-sm">99.9%</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] sm:text-xs text-gray-400">Users</div>
+                                    <div id="live-users" class="text-sm sm:text-xl font-mono font-bold text-purple-400 drop-shadow-sm">1.2k</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Widget (Standard Discord Widget - Now Smaller) -->
+                        <div class="glass-panel rounded-xl overflow-hidden h-[400px]">
+                            <iframe src="https://discord.com/widget?id=1472954077099855978	&theme=dark" width="100%" height="100%" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB: TEAM (UPDATED) -->
+            <div id="tab-team" class="hidden p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+                <!-- Core Team Section -->
+                <div class="mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-white drop-shadow-md">Core Team</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Owner -->
+                        <div class="glass-panel p-6 rounded-xl flex items-center gap-4 border border-yellow-500/30 bg-yellow-500/10 cursor-pointer hover:bg-yellow-500/20 transition-colors" onclick="openUserModal('owner', {name: 'VoidTech', role: 'Owner', status: 'Do Not Disturb', game: 'VS Code', id: '123456789', avatar: 'https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif', roleColor: 'bg-yellow-500', roleText: 'text-yellow-500'})">
+                            <img src="https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif" class="w-16 h-16 rounded-full border-2 border-yellow-500 shrink-0">
+                            <div class="min-w-0">
+                                <h3 class="font-bold text-xl text-white truncate">VoidTech</h3>
+                                <span class="text-xs font-bold bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded border border-yellow-500/20">OWNER</span>
+                                <p class="text-sm text-gray-300 mt-1 truncate">Lead Developer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Discord Members Section -->
+                <div class="mt-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Discord Community</h2>
+                            <p class="text-gray-300 text-sm">Members currently online on the server. Click to view profile.</p>
+                        </div>
+                    </div>
+
+                    <div id="discord-loader" class="py-10 text-center hidden">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500 mb-2"></i>
+                        <p class="text-gray-400 text-xs animate-pulse">Syncing members from Discord...</p>
+                    </div>
+
+                    <div class="glass-panel rounded-xl border border-white/10 flex flex-col">
+                        <div class="p-4 border-b border-white/10 bg-black/20 flex justify-between items-center backdrop-blur-md">
+                            <span class="text-xs font-bold text-gray-300 uppercase">Online Members</span>
+                            <span id="member-count" class="text-xs bg-indigo-600 px-2 py-0.5 rounded text-white font-bold">0</span>
+                        </div>
+                        <div id="discord-members-grid" class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 content-start">
+                            <!-- Members will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+       <!-- TAB: COMMANDS -->
+            <div id="tab-commands" class="hidden p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full animate-fade-in h-full flex flex-col">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 shrink-0">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Command Library</h2>
+                        <p class="text-gray-300 text-sm">Access over 600+ system commands instantly.</p>
+                    </div>
+                    <input type="text" id="cmdSearch" onkeyup="filterCommands()" placeholder="Search commands..." class="bg-black/30 border border-white/10 rounded-lg px-4 py-2 text-sm w-full md:w-64 focus:border-cyan-500 outline-none transition-all text-white placeholder-gray-500 backdrop-blur-sm">
+                </div>
+                
+                <!-- Category Filters -->
+                <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide shrink-0">
+                    <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-1.5 rounded-full bg-cyan-600 text-white text-xs font-bold whitespace-nowrap transition-colors border border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.3)]">All Commands</button>
+                    <button onclick="filterCategory('useful', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Useful</button>
+                    <button onclick="filterCategory('linux', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Linux</button>
+                    <button onclick="filterCategory('vps', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">VPS</button>
+                    <button onclick="filterCategory('docker', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Docker</button>
+                    <button onclick="filterCategory('git', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Git</button>
+                    <button onclick="filterCategory('networking', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Networking</button>
+                    <button onclick="filterCategory('system', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">System</button>
+                    <button onclick="filterCategory('auto', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Auto</button>
+                    <button onclick="filterCategory('review', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Review</button>
+                    <button onclick="filterCategory('suggestion', this)" class="cat-btn px-4 py-1.5 rounded-full bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 text-xs font-bold whitespace-nowrap transition-colors border border-white/10 backdrop-blur-sm">Suggestion</button>
+                </div>
+                
+                <div class="glass-panel rounded-xl flex-1 overflow-hidden flex flex-col border border-white/10 min-h-0">
+                    <div class="grid grid-cols-12 bg-black/30 p-3 text-xs font-bold text-gray-400 uppercase border-b border-white/10 shrink-0 backdrop-blur-sm">
+                        <div class="col-span-2 hidden sm:block">Category</div>
+                        <div class="col-span-3 sm:col-span-3">Title</div>
+                        <div class="col-span-7 sm:col-span-5 text-right sm:text-left">Command</div>
+                        <div class="col-span-2 text-right hidden sm:block">Action</div>
+                    </div>
+                    <div id="commands-list" class="flex-1 overflow-y-auto p-2 space-y-1">
+                        <!-- Commands injected here -->
+                    </div>
+                    <div class="p-2 bg-black/30 text-xs text-center text-gray-400 border-t border-white/10 shrink-0 backdrop-blur-sm">
+                        Showing <span id="cmd-count">0</span> commands
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: ANALYTICS -->
+            <div id="tab-analytics" class="hidden p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-white drop-shadow-md">Live Analytics</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+                    <!-- CPU -->
+                    <div class="glass-panel p-5 rounded-xl border-l-4 border-cyan-500">
+                        <div class="flex justify-between mb-2"><span class="text-gray-300 text-xs font-bold">CPU</span><i class="fa-solid fa-microchip text-cyan-500"></i></div>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-white"><span id="live-cpu">0</span>%</div>
+                        <div class="h-1.5 bg-gray-700/50 rounded-full mt-2 overflow-hidden"><div id="bar-cpu" class="h-full bg-cyan-500 w-0 transition-all"></div></div>
+                    </div>
+                    <!-- RAM -->
+                    <div class="glass-panel p-5 rounded-xl border-l-4 border-purple-500">
+                        <div class="flex justify-between mb-2"><span class="text-gray-300 text-xs font-bold">RAM</span><i class="fa-solid fa-memory text-purple-500"></i></div>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-white"><span id="live-ram">0</span>GB</div>
+                        <div class="text-xs text-gray-400 mt-1">/ 512 GB Total</div>
+                    </div>
+                    <!-- NET -->
+                    <div class="glass-panel p-5 rounded-xl border-l-4 border-green-500">
+                        <div class="flex justify-between mb-2"><span class="text-gray-300 text-xs font-bold">NETWORK</span><i class="fa-solid fa-network-wired text-green-500"></i></div>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-white"><span id="live-net">0</span> Mbps</div>
+                        <div class="text-xs text-green-400 mt-1 flex gap-2"><span>↑ <span id="live-upload">0</span></span> <span>↓ <span id="live-download">0</span></span></div>
+                    </div>
+                    <!-- SESSIONS -->
+                    <div class="glass-panel p-5 rounded-xl border-l-4 border-yellow-500">
+                        <div class="flex justify-between mb-2"><span class="text-gray-300 text-xs font-bold">ACTIVE</span><i class="fa-solid fa-users text-yellow-500"></i></div>
+                        <div class="text-2xl sm:text-3xl font-mono font-bold text-white">842</div>
+                        <div class="text-xs text-yellow-500 mt-1">● Peak Load</div>
+                    </div>
+                </div>
+
+                <!-- Graph -->
+                <div class="glass-panel rounded-xl p-4 sm:p-6 h-64 mb-6 relative overflow-hidden">
+                    <h3 class="text-sm font-bold text-gray-300 mb-4">REAL-TIME TRAFFIC</h3>
+                    <canvas id="trafficChart" class="w-full h-full absolute inset-0"></canvas>
+                </div>
+
+                <!-- Advanced Metrics Grid (15 New Features) -->
+                <h3 class="text-lg font-bold text-white mb-4 mt-8 px-1 drop-shadow-md">Extended Server Metrics</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+                    <!-- 1. Temperature -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Core Temp</div>
+                       <div class="text-lg sm:text-xl font-mono text-red-400 mt-1"><span id="metric-temp">45</span>°C</div>
+                    </div>
+                    <!-- 2. Disk Read -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Disk Read</div>
+                       <div class="text-lg sm:text-xl font-mono text-blue-400 mt-1"><span id="metric-disk-read">0</span> MB/s</div>
+                    </div>
+                    <!-- 3. Disk Write -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Disk Write</div>
+                       <div class="text-lg sm:text-xl font-mono text-blue-400 mt-1"><span id="metric-disk-write">0</span> MB/s</div>
+                    </div>
+                    <!-- 4. DB Connections -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">DB Conn.</div>
+                       <div class="text-lg sm:text-xl font-mono text-yellow-400 mt-1"><span id="metric-db-conn">12</span></div>
+                    </div>
+                    <!-- 5. API RPS -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">API Req/s</div>
+                       <div class="text-lg sm:text-xl font-mono text-green-400 mt-1"><span id="metric-api-rps">450</span></div>
+                    </div>
+                    <!-- 6. Error Rate -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Error Rate</div>
+                       <div class="text-lg sm:text-xl font-mono text-red-500 mt-1"><span id="metric-error-rate">0.01</span>%</div>
+                    </div>
+                    <!-- 7. Cache Hit -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Cache Hit</div>
+                       <div class="text-lg sm:text-xl font-mono text-purple-400 mt-1"><span id="metric-cache-hit">94</span>%</div>
+                    </div>
+                    <!-- 8. Docker -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Containers</div>
+                       <div class="text-lg sm:text-xl font-mono text-cyan-400 mt-1"><span id="metric-docker">8</span>/12</div>
+                    </div>
+                    <!-- 9. Load 1m -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Load (1m)</div>
+                       <div class="text-lg sm:text-xl font-mono text-gray-300 mt-1"><span id="metric-load-1">0.45</span></div>
+                    </div>
+                    <!-- 10. Load 5m -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Load (5m)</div>
+                       <div class="text-lg sm:text-xl font-mono text-gray-300 mt-1"><span id="metric-load-5">0.40</span></div>
+                    </div>
+                    <!-- 11. Load 15m -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Load (15m)</div>
+                       <div class="text-lg sm:text-xl font-mono text-gray-300 mt-1"><span id="metric-load-15">0.35</span></div>
+                    </div>
+                    <!-- 12. Swap -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Swap Usage</div>
+                       <div class="text-lg sm:text-xl font-mono text-orange-400 mt-1"><span id="metric-swap">12</span>%</div>
+                    </div>
+                    <!-- 13. Inodes -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Inode Usage</div>
+                       <div class="text-lg sm:text-xl font-mono text-pink-400 mt-1"><span id="metric-inodes">45</span>%</div>
+                    </div>
+                    <!-- 14. Processes -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Processes</div>
+                       <div class="text-lg sm:text-xl font-mono text-teal-400 mt-1"><span id="metric-processes">142</span></div>
+                    </div>
+                    <!-- 15. Grade -->
+                    <div class="glass-panel p-3 rounded-lg text-center hover:bg-white/5 transition-colors">
+                       <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Health</div>
+                       <div class="text-lg sm:text-xl font-bold text-green-400 mt-1"><span id="metric-grade">A+</span></div>
+                    </div>
+                </div>
+
+                <!-- Logs -->
+                <div class="glass-panel rounded-xl p-4 h-40 flex flex-col font-mono text-xs">
+                    <div class="text-gray-400 mb-2 border-b border-white/10 pb-1">SYSTEM LOGS</div>
+                    <div id="log-container" class="flex-1 overflow-hidden flex flex-col-reverse text-gray-300 text-[10px] sm:text-xs">
+                        <!-- Logs -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: PROJECTS -->
+            <div id="tab-projects" class="hidden p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Tools</h2>
+                        <p class="text-gray-300 text-sm">Some Useful Tools.</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+               <!-- Project 4 (Discord Banner Tool) -->
+                    <div class="glass-panel p-6 rounded-xl border border-white/10 hover:border-indigo-500/50 transition-all group hover:-translate-y-1">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-3 bg-indigo-500/10 rounded-lg text-indigo-400 border border-indigo-500/20">
+                                <i class="fa-brands fa-discord text-2xl"></i>
+                            </div>
+                            <span class="px-2 py-1 bg-green-500/10 text-green-400 border border-green-500/20 text-[10px] uppercase font-bold rounded">Live</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">Discord Banner Maker</h3>
+                        <p class="text-gray-300 text-sm mb-4 leading-relaxed">Create custom, professional Discord profile banners instantly with our built-in generator tool.</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-white/10">
+                            <span class="text-xs text-gray-400"><i class="fa-solid fa-bolt"></i> v2.0.0</span>
+                            <button onclick="switchTab('banner-tool')" class="text-sm text-indigo-400 hover:text-white transition-colors flex items-center gap-1">Open Tool <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Project 5 (Logo Maker - NEW) -->
+                    <div class="glass-panel p-6 rounded-xl border border-white/10 hover:border-pink-500/50 transition-all group hover:-translate-y-1">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-3 bg-pink-500/10 rounded-lg text-pink-400 border border-pink-500/20">
+                                <i class="fa-solid fa-paintbrush text-2xl"></i>
+                            </div>
+                            <span class="px-2 py-1 bg-green-500/10 text-green-400 border border-green-500/20 text-[10px] uppercase font-bold rounded">New</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">Logo Maker Studio</h3>
+                        <p class="text-gray-300 text-sm mb-4 leading-relaxed">Design professional logos with custom fonts, shapes, borders, and icons.</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-white/10">
+                            <span class="text-xs text-gray-400"><i class="fa-solid fa-star"></i> v1.1.0</span>
+                            <button onclick="switchTab('logo-tool')" class="text-sm text-pink-400 hover:text-white transition-colors flex items-center gap-1">Open Tool <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: BANNER TOOL (UPDATED) -->
+            <div id="tab-banner-tool" class="hidden p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+                <div class="flex items-center gap-4 mb-6">
+                    <button onclick="switchTab('Tools')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Banner Maker Pro</h2>
+                        <p class="text-gray-300 text-sm">Design your custom profile banner with advanced controls.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Controls (Left - 4 Cols) -->
+                    <div class="lg:col-span-4 glass-panel p-5 rounded-xl space-y-5 h-fit max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+                        
+                        <!-- Section: Content -->
+                        <div>
+                            <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-3 border-b border-white/10 pb-1 tracking-wider">Content</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Main Title</label>
+                                    <input type="text" id="banner-text" value="VOIDTECH" class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-cyan-500 outline-none transition-all placeholder-gray-600" oninput="updateBanner()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Subtitle</label>
+                                    <input type="text" id="banner-subtext" value="discord.gg/codinghub" class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-cyan-500 outline-none transition-all placeholder-gray-600" oninput="updateBanner()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section: Typography -->
+                        <div>
+                            <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-3 border-b border-white/10 pb-1 tracking-wider">Typography</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Title Size</label>
+                                    <input type="range" id="banner-main-size" min="20" max="120" value="60" class="w-full accent-cyan-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" oninput="updateBanner()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Sub Size</label>
+                                    <input type="range" id="banner-sub-size" min="10" max="60" value="24" class="w-full accent-cyan-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" oninput="updateBanner()">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Text Color</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="color" id="banner-text-color" value="#ffffff" class="w-8 h-8 bg-transparent rounded cursor-pointer border-none p-0" oninput="updateBanner()">
+                                    <span class="text-xs text-gray-500 font-mono">#FFFFFF</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section: Background -->
+                        <div>
+                            <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-3 border-b border-white/10 pb-1 tracking-wider">Background</h4>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Start Color</label>
+                                    <input type="color" id="banner-color1" value="#0f172a" class="w-full h-8 bg-black/40 rounded cursor-pointer border border-white/10 p-0.5" oninput="updateBanner()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">End Color</label>
+                                    <input type="color" id="banner-color2" value="#0891b2" class="w-full h-8 bg-black/40 rounded cursor-pointer border border-white/10 p-0.5" oninput="updateBanner()">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Gradient Direction</label>
+                                <select id="banner-gradient-dir" class="w-full bg-black/40 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:border-cyan-500 outline-none" onchange="updateBanner()">
+                                    <option value="horizontal">Horizontal (Left -> Right)</option>
+                                    <option value="vertical">Vertical (Top -> Bottom)</option>
+                                    <option value="diagonal">Diagonal (Top-Left -> Bot-Right)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Section: Effects -->
+                        <div>
+                            <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-3 border-b border-white/10 pb-1 tracking-wider">Effects & Borders</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Grid Opacity</label>
+                                    <input type="range" id="banner-grid-opacity" min="0" max="100" value="20" class="w-full accent-cyan-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" oninput="updateBanner()">
+                                </div>
+                                <div class="flex items-center justify-between bg-black/20 p-2 rounded-lg border border-white/5">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" id="banner-border-check" checked class="accent-cyan-500 w-4 h-4 rounded cursor-pointer" onchange="updateBanner()">
+                                        <label for="banner-border-check" class="text-xs text-gray-300 cursor-pointer">Enable Border</label>
+                                    </div>
+                                    <input type="color" id="banner-border-color" value="#ffffff" class="w-6 h-6 bg-transparent rounded cursor-pointer border-none p-0" oninput="updateBanner()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="downloadBanner()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 mt-4 border border-white/10">
+                            <i class="fa-solid fa-download animate-bounce"></i> Download Banner
+                        </button>
+                    </div>
+
+                    <!-- Preview (Right - 8 Cols) -->
+                    <div class="lg:col-span-8 flex flex-col gap-6">
+                        <div class="glass-panel p-8 rounded-xl flex items-center justify-center bg-black/60 border border-white/10 min-h-[400px] relative overflow-hidden">
+                            <!-- Background glow for presentation -->
+                            <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 to-purple-500/5 pointer-events-none"></div>
+                            
+                            <canvas id="banner-canvas" width="600" height="240" class="max-w-full h-auto rounded-lg shadow-2xl border border-white/20 transition-transform duration-500 hover:scale-[1.02]"></canvas>
+                        </div>
+                        
+                        <div class="glass-panel p-4 rounded-xl flex items-start gap-4 border border-cyan-500/20 bg-cyan-900/10">
+                            <div class="p-2 bg-cyan-500/20 rounded-lg text-cyan-400 shrink-0">
+                                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Pro Tip</h4>
+                                <p class="text-xs text-gray-400 mt-1 leading-relaxed">
+                                    This tool generates a <b>600x240</b> PNG image, which is the perfect aspect ratio for Discord profile banners. 
+                                    Try using contrasting colors for the gradient to make your text pop!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: LOGO TOOL (NEW) -->
+            <div id="tab-logo-tool" class="hidden p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+                <div class="flex items-center gap-4 mb-6">
+                    <button onclick="switchTab('projects')" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">Logo Maker Studio</h2>
+                        <p class="text-gray-300 text-sm">Create standard & Discord-ready logos.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Controls (Left - 4 Cols) -->
+                    <div class="lg:col-span-4 glass-panel p-5 rounded-xl space-y-5 h-fit max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+                        
+                        <!-- Content Type -->
+                        <div>
+                            <h4 class="text-pink-400 text-[10px] font-bold uppercase mb-3 border-b border-white/10 pb-1 tracking-wider">Content Type</h4>
+                            <div class="flex gap-2 mb-3">
+                                <button onclick="setLogoMode('text')" id="logo-mode-text" class="flex-1 py-1.5 rounded bg-pink-600 text-white text-xs font-bold transition-all">Text / Initials</button>
+                                <button onclick="setLogoMode('icon')" id="logo-mode-icon" class="flex-1 py-1.5 rounded bg-black/40 text-gray-400 text-xs font-bold transition-all hover:text-white">Icon</button>
+                            </div>
+                            
+                            <div id="logo-input-text-container">
+                                <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Enter Text</label>
+                                <input type="text" id="logo-text" value="CH" maxlength="3" class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-pink-500 outline-none transition-all placeholder-gray-600 text-center uppercase" oninput="updateLogo()">
+                            </div>
+
+                            <div id="logo-input-icon-container" class="hidden">
+                                <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Select Icon</label>
+                                <select id="logo-icon-select" class="w-full bg-black/40 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:border-pink-500 outline-none" onchange="updateLogo()">
+                                    <option value="code">Code (Dev)</option>
+                                    <option value="terminal">Terminal</option>
+                                    <option value="server">Server</option>
+                                    <option value="discord">Discord</option>
+                                    <option value="robot">Bot / Robot</option>
+                                    <option value="gamepad">Gaming</option>
+                                    <option value="crown">Owner / Crown</option>
+                                    <option value="shield">Security</option>
+                                </select>
+                            </div>
+
+                            <!-- Font Selection (New) -->
+                            <div id="logo-font-container" class="mt-3">
+                                <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Font Style</label>
+                                <select id="logo-font" class="w-full bg-black/40 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:border-pink-500 outline-none" onchange="updateLogo()">
+                                    <option value="Inter, sans-serif">Inter (Modern)</option>
+                                    <option value="'Poppins', sans-serif">Poppins (Bold)</option>
+                                    <option value="'Roboto Mono', monospace">Roboto Mono (Code)</option>
+                                    <option value="'Lobster', cursive">Lobster (Cursive)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Shape -->
+                        <div>
+                            <h4 class="text-pink-400 text-[10px] font-bold uppercase mb-3 border-b border-white/10 pb-1 tracking-wider">Shape</h4>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="setLogoShape('circle')" class="p-2 rounded bg-black/40 hover:bg-white/10 border border-white/5 flex flex-col items-center gap-1 group">
+                                    <div class="w-6 h-6 rounded-full border-2 border-gray-500 group-hover:border-pink-400"></div>
+                                    <span class="text-[9px] text-gray-400">Circle (DC)</span>
+                                </button>
+                                <button onclick="setLogoShape('square')" class="p-2 rounded bg-black/40 hover:bg-white/10 border border-white/5 flex flex-col items-center gap-1 group">
+                                    <div class="w-6 h-6 border-2 border-gray-500 group-hover:border-pink-400"></div>
+                                    <span class="text-[9px] text-gray-400">Square</span>
+                                </button>
+                                <button onclick="setLogoShape('rounded')" class="p-2 rounded bg-black/40 hover:bg-white/10 border border-white/5 flex flex-col items-center gap-1 group">
+                                    <div class="w-6 h-6 rounded-md border-2 border-gray-500 group-hover:border-pink-400"></div>
+                                    <span class="text-[9px] text-gray-400">Rounded</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="logo-shape" value="circle">
+                        </div>
+
+                        <!-- Styling -->
+                        <div>
+                            <h4 class="text-pink-400 text-[10px] font-bold uppercase mb-3 border-b border-white/10 pb-1 tracking-wider">Styling</h4>
+                            
+                            <!-- Colors -->
+                            <div class="grid grid-cols-3 gap-2 mb-4">
+                                <div>
+                                    <label class="block text-[9px] text-gray-500 uppercase mb-1">BG Start</label>
+                                    <input type="color" id="logo-color1" value="#ec4899" class="w-full h-8 bg-black/40 rounded cursor-pointer border border-white/10 p-0.5" oninput="updateLogo()">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] text-gray-500 uppercase mb-1">BG End</label>
+                                    <input type="color" id="logo-color2" value="#8b5cf6" class="w-full h-8 bg-black/40 rounded cursor-pointer border border-white/10 p-0.5" oninput="updateLogo()">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] text-gray-500 uppercase mb-1">Content</label>
+                                    <input type="color" id="logo-text-color" value="#ffffff" class="w-full h-8 bg-black/40 rounded cursor-pointer border border-white/10 p-0.5" oninput="updateLogo()">
+                                </div>
+                            </div>
+
+                            <!-- Border Control (New) -->
+                            <div class="mb-4 bg-black/20 p-2 rounded-lg border border-white/5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="text-[10px] text-gray-400 font-bold uppercase">Border</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="color" id="logo-border-color" value="#ffffff" class="w-4 h-4 bg-transparent rounded cursor-pointer border-none p-0" oninput="updateLogo()">
+                                        <input type="checkbox" id="logo-border-check" class="accent-pink-500 w-3 h-3 rounded cursor-pointer" onchange="updateLogo()">
+                                    </div>
+                                </div>
+                                <input type="range" id="logo-border-width" min="0" max="40" value="10" class="w-full accent-pink-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" oninput="updateLogo()">
+                            </div>
+
+                            <!-- Size Slider -->
+                            <div>
+                                <label class="block text-[10px] text-gray-400 font-bold uppercase mb-1">Content Size</label>
+                                <input type="range" id="logo-size" min="100" max="400" value="250" class="w-full accent-pink-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" oninput="updateLogo()">
+                            </div>
+                        </div>
+
+                        <button onclick="downloadLogo()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-pink-500/20 flex items-center justify-center gap-2 mt-4 border border-white/10">
+                            <i class="fa-solid fa-download animate-bounce"></i> Download Logo
+                        </button>
+                    </div>
+
+                    <!-- Preview (Right - 8 Cols) -->
+                    <div class="lg:col-span-8 flex flex-col gap-6">
+                        <div class="glass-panel p-8 rounded-xl flex items-center justify-center bg-black/60 border border-white/10 min-h-[400px] relative overflow-hidden">
+                             <!-- Preview Grid Background -->
+                             <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#4b5563 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            
+                            <canvas id="logo-canvas" width="512" height="512" class="max-w-[300px] md:max-w-[400px] h-auto shadow-2xl drop-shadow-2xl transition-transform duration-500 hover:scale-105"></canvas>
+                        </div>
+                        
+                        <div class="glass-panel p-4 rounded-xl flex items-start gap-4 border border-pink-500/20 bg-pink-900/10">
+                            <div class="p-2 bg-pink-500/20 rounded-lg text-pink-400 shrink-0">
+                                <i class="fa-solid fa-lightbulb text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Logo Tips</h4>
+                                <p class="text-xs text-gray-400 mt-1 leading-relaxed">
+                                    The "Circle" shape is optimized for Discord avatars. When uploaded, Discord will crop it to a circle automatically. 
+                                    Using initials (1-3 chars) usually looks best for server icons!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     <!-- TAB: ABOUT (Formerly Settings) -->
+            <div id="tab-about" class="hidden p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full animate-fade-in">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-white drop-shadow-md">About</h2>
+                
+                <!-- About Info Section -->
+                <div class="glass-panel p-6 sm:p-8 rounded-xl mb-8 border border-white/10">
+                    <div class="flex flex-col md:flex-row items-start gap-6">
+                        <img src="https://i.ibb.co/XxBbW3ZZ/discord-avatar-decoration-animated-1776068650160.gif" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-500/50 shrink-0">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Void Tech Dashboard <span class="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded ml-2 align-middle border border-cyan-500/30">v1.0</span></h3>
+                            <p class="text-gray-300 text-sm mb-4 leading-relaxed max-w-2xl">
+                                Welcome to the ultimate command center designed for developers. Void Tech provides real-time server analytics and a vast library of system commands. Built with precision by <span class="text-cyan-400 font-bold">VoidTech</span>.
+                            </p>
+                            <div class="flex flex-wrap gap-4 text-xs font-mono text-gray-400">
+                                <span>Build: 2024.12.RC</span>
+                                <span>•</span>
+                                <span>Status: <span class="text-green-400 font-bold">Stable</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- WIDGETBOT SCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
+
+    <!-- MAIN LOGIC -->
+    <script>
+        // --- CONFIGURATION ---
+        const DEFAULT_CHANNEL_ID = 'UCpUuG0x7Av-4v2MrdevnrlQ'; 
+        const DISCORD_GUILD_ID = '1472954077099855978';
+
+        // --- GLOBAL STATE for Members ---
+        let currentDiscordMembers = [];
+
+        // --- NAVIGATION ---
+        function switchTab(tabId) {
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+
+            // Hide all tabs
+            ['home', 'team', 'commands', 'analytics', 'Tools', 'about', 'banner-tool', 'logo-tool'].forEach(id => {
+                const el = document.getElementById('tab-' + id);
+                if(el) el.classList.add('hidden');
+                
+                // Desktop Buttons (reset all)
+                const btn = document.getElementById('btn-' + id);
+                if(btn) {
+                    btn.classList.remove('nav-btn-active', 'text-white');
+                    btn.classList.add('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+                }
+
+                // Mobile Buttons
+                const btnM = document.getElementById('btn-' + id + '-m');
+                if(btnM) {
+                    btnM.classList.remove('bg-cyan-600/20', 'text-cyan-400', 'border-cyan-600/30');
+                    btnM.classList.add('text-gray-300', 'hover:bg-white/10', 'hover:text-white');
+                }
+            });
+            
+            // Show selected tab
+            const selectedEl = document.getElementById('tab-' + tabId);
+            if(selectedEl) selectedEl.classList.remove('hidden');
+            
+            // Determine active button (Tools highlight Projects button)
+            let activeBtnId = tabId;
+            if (tabId === 'banner-tool' || tabId === 'logo-tool') activeBtnId = 'Tools';
+
+            // Update Desktop Button
+            const selectedBtn = document.getElementById('btn-' + activeBtnId);
+            if(selectedBtn) {
+                selectedBtn.classList.add('nav-btn-active', 'text-white');
+                selectedBtn.classList.remove('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+            }
+
+            // Update Mobile Button
+            const selectedBtnM = document.getElementById('btn-' + activeBtnId + '-m');
+            if(selectedBtnM) {
+                selectedBtnM.classList.add('bg-cyan-600/20', 'text-cyan-400', 'border-cyan-600/30');
+                selectedBtnM.classList.remove('text-gray-300', 'hover:bg-white/10', 'hover:text-white');
+            }
+
+            if (tabId === 'analytics') startAnalytics();
+            if (tabId === 'team') fetchDiscordMembers();
+            
+            // Init tools
+            if (tabId === 'banner-tool') document.fonts.ready.then(() => updateBanner());
+            if (tabId === 'logo-tool') document.fonts.ready.then(() => updateLogo());
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            
+            if (menu.classList.contains('hidden')) {
+                // Open
+                menu.classList.remove('hidden');
+                // Small delay to allow display:block to apply before transition
+                setTimeout(() => {
+                    menu.classList.remove('scale-y-0', 'opacity-0');
+                }, 10);
+            } else {
+                // Close
+                menu.classList.add('scale-y-0', 'opacity-0');
+                setTimeout(() => {
+                    menu.classList.add('hidden');
+                }, 300); // Match transition duration
+            }
+        }
+
+        // --- DISCORD MEMBERS SYNC (WITH ROLES & MODAL) ---
+        async function fetchDiscordMembers() {
+            const grid = document.getElementById('discord-members-grid');
+            const loader = document.getElementById('discord-loader');
+            const countBadge = document.getElementById('member-count');
+            
+            if(grid.children.length > 0 && currentDiscordMembers.length > 0) return;
+
+            loader.classList.remove('hidden');
+            grid.innerHTML = ''; 
+
+            try {
+                const response = await fetch(`https://discord.com/api/guilds/${DISCORD_GUILD_ID}/widget.json`);
+                const data = await response.json();
+                
+                loader.classList.add('hidden');
+
+                if (data.members) {
+                    countBadge.innerText = data.members.length;
+                    currentDiscordMembers = data.members; // Store for modal access
+                    
+                    const sortedMembers = data.members.sort((a, b) => (a.status === 'online' ? -1 : 1));
+
+                    let html = '';
+                    sortedMembers.forEach(member => {
+                        const avatarUrl = member.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png';
+                        
+                        // Determine Status Color
+                        let statusColor = 'bg-gray-500';
+                        if(member.status === 'online') statusColor = 'bg-green-500';
+                        if(member.status === 'idle') statusColor = 'bg-yellow-500';
+                        if(member.status === 'dnd') statusColor = 'bg-red-500';
+
+                        // Simulate Role (Since widget JSON doesn't provide real roles, we assume Member or based on name)
+                        // In a real app with bot token, we would fetch real roles.
+                        let roleName = "Member";
+                        let roleBadgeColor = "bg-gray-700 text-gray-300";
+                        
+                        // Fake role logic for visual demo (replace with real logic if you have data)
+                        if(member.username.includes("Admin") || member.username === "Nobita") { roleName = "Admin"; roleBadgeColor = "bg-red-900/50 text-red-300 border border-red-500/20"; }
+                        else if(member.username.includes("Bot")) { roleName = "Bot"; roleBadgeColor = "bg-blue-900/50 text-blue-300 border border-blue-500/20"; }
+
+                        // Store data in data attributes for click handler to easy access without lookup
+                        // Note: Passing ID to function is cleaner
+                        
+                        html += `
+                        <div onclick="openUserModal('${member.id}')" class="flex flex-col items-center p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group cursor-pointer relative overflow-hidden">
+                            <div class="relative shrink-0 mb-3">
+                                <img src="${avatarUrl}" class="w-16 h-16 rounded-full object-cover shadow-lg group-hover:scale-105 transition-transform">
+                                <div class="absolute bottom-0 right-0 w-4 h-4 ${statusColor} rounded-full border-2 border-[#1f2937]"></div>
+                            </div>
+                            <h4 class="text-sm font-bold text-gray-200 truncate w-full text-center group-hover:text-cyan-400 transition-colors">${member.username}</h4>
+                            <span class="mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${roleBadgeColor}">${roleName}</span>
+                            
+                            <!-- Game Activity (Small) -->
+                            ${member.game ? `<div class="mt-2 text-[10px] text-gray-500 flex items-center gap-1 truncate w-full justify-center"><i class="fa-solid fa-gamepad"></i> ${member.game.name}</div>` : ''}
+                        </div>`;
+                    });
+                    grid.innerHTML = html;
+                } else {
+                    grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">No members online.</div>';
+                }
+            } catch (error) {
+                console.error("Discord Sync Error:", error);
+                loader.classList.add('hidden');
+                generateMockMembers(grid, countBadge); 
+            }
+        }
+
+        // Generate Mock Members (Fallback)
+        function generateMockMembers(grid, countBadge) {
+            const mockUsers = [
+                { id: 'm1', username: "DevUser01", status: "online", game: {name: "VS Code"}, avatar_url: "" },
+                { id: 'm2', username: "Python_Guru", status: "dnd", game: {name: "Coding..."}, avatar_url: "" },
+                { id: 'm3', username: "React_Fan", status: "idle", game: null, avatar_url: "" },
+                { id: 'm4', username: "SystemAdmin", status: "online", game: {name: "Server Maint"}, avatar_url: "" },
+            ];
+            countBadge.innerText = mockUsers.length;
+            currentDiscordMembers = mockUsers; // Set mock data for modal
+
+            let html = '';
+            mockUsers.forEach(m => {
+                let statusColor = m.status === 'online' ? 'bg-green-500' : (m.status === 'dnd' ? 'bg-red-500' : 'bg-yellow-500');
+                let roleName = m.username === "SystemAdmin" ? "Admin" : "Member";
+                let roleColor = m.username === "SystemAdmin" ? "bg-red-900/50 text-red-300" : "bg-gray-700 text-gray-300";
+                
+                html += `
+                <div onclick="openUserModal('${m.id}')" class="flex flex-col items-center p-4 rounded-xl bg-white/5 border border-red-500/20 hover:bg-white/10 transition-all group cursor-pointer">
+                    <div class="relative shrink-0 mb-3">
+                        <div class="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center text-xl font-bold">${m.username.substring(0,2)}</div>
+                        <div class="absolute bottom-0 right-0 w-4 h-4 ${statusColor} rounded-full border-2 border-[#1f2937]"></div>
+                    </div>
+                    <h4 class="text-sm font-bold text-gray-200 truncate w-full text-center">${m.username}</h4>
+                    <span class="mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${roleColor}">${roleName}</span>
+                </div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        // --- USER MODAL LOGIC ---
+        function openUserModal(id, manualData = null) {
+            let member;
+            if(manualData) {
+                member = manualData; // For owner card click
+            } else {
+                member = currentDiscordMembers.find(m => m.id === id);
+            }
+
+            if(!member) return;
+
+            // DOM Elements
+            const modalBackdrop = document.getElementById('user-modal-backdrop');
+            const modalContent = document.getElementById('user-modal');
+            const avatarEl = document.getElementById('modal-avatar');
+            const nameEl = document.getElementById('modal-username');
+            const statusIndicator = document.getElementById('modal-status-indicator');
+            const statusText = document.getElementById('modal-status-text');
+            const roleBadge = document.getElementById('modal-role-badge');
+            const gameEl = document.getElementById('modal-game');
+            const idEl = document.getElementById('modal-userid');
+
+            // Populate Data
+            const avatarSrc = member.avatar || member.avatar_url || (manualData ? member.avatar : 'https://cdn.discordapp.com/embed/avatars/0.png');
+            avatarEl.src = avatarSrc;
+            nameEl.innerText = member.username || member.name;
+            idEl.innerText = member.id || "Unknown ID";
+
+            // Status Styling
+            let sColor = 'bg-gray-500';
+            let sText = 'Offline';
+            if(member.status === 'online') { sColor = 'bg-green-500'; sText = 'Online'; }
+            if(member.status === 'idle') { sColor = 'bg-yellow-500'; sText = 'Idle'; }
+            if(member.status === 'dnd') { sColor = 'bg-red-500'; sText = 'Do Not Disturb'; }
+            
+            statusIndicator.className = `absolute bottom-1 right-1 w-6 h-6 rounded-full border-4 border-[#1e293b] ${sColor}`;
+            statusText.innerText = sText;
+
+            // Role Logic (Mock)
+            let role = manualData ? manualData.role : "Community Member";
+            let roleClass = manualData ? (manualData.roleColor + ' ' + manualData.roleText) : "bg-gray-700 text-gray-300";
+            
+            if(!manualData) {
+                // Infer role from name for demo
+                if(member.username.includes("Bot")) { role = "System Bot"; roleClass = "bg-blue-900/50 text-blue-300 border border-blue-500/20"; }
+            }
+
+            roleBadge.innerText = role;
+            roleBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${roleClass}`;
+
+            // Game
+            const gameName = manualData ? manualData.game : (member.game ? member.game.name : "No active status");
+            gameEl.innerText = gameName;
+
+            // Show
+            modalBackdrop.classList.remove('hidden');
+            modalBackdrop.classList.remove('opacity-0');
+            modalContent.classList.add('modal-enter');
+        }
+
+        function closeUserModal() {
+            const modalBackdrop = document.getElementById('user-modal-backdrop');
+            modalBackdrop.classList.add('hidden');
+        }
+
+        // --- OTHERS ---
+        function copyCmd() {
+            const el = document.getElementById('cmdInput');
+            el.select();
+            document.execCommand('copy');
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 2000);
+        }
+
+        function startAnalytics() {
+             // Only start interval if not already running
+             if (window.analyticsInterval) return;
+
+             window.analyticsInterval = setInterval(() => {
+                if(document.getElementById('tab-analytics').classList.contains('hidden')) return;
+                
+                // Existing
+                document.getElementById('live-cpu').innerText = Math.floor(Math.random() * 40) + 10;
+                document.getElementById('bar-cpu').style.width = document.getElementById('live-cpu').innerText + '%';
+                document.getElementById('live-ram').innerText = (Math.random() * 2 + 4).toFixed(1);
+                
+                const dl = Math.floor(Math.random() * 50) + 20;
+                const ul = Math.floor(Math.random() * 20) + 5;
+                document.getElementById('live-net').innerText = dl + ul;
+                document.getElementById('live-download').innerText = dl;
+                document.getElementById('live-upload').innerText = ul;
+
+                // 15 New Features Randomization
+                document.getElementById('metric-temp').innerText = Math.floor(Math.random() * 15) + 35; // 35-50C
+                document.getElementById('metric-disk-read').innerText = (Math.random() * 50 + 10).toFixed(1);
+                document.getElementById('metric-disk-write').innerText = (Math.random() * 30 + 5).toFixed(1);
+                document.getElementById('metric-db-conn').innerText = Math.floor(Math.random() * 20) + 5;
+                document.getElementById('metric-api-rps').innerText = Math.floor(Math.random() * 200) + 300;
+                document.getElementById('metric-error-rate').innerText = (Math.random() * 0.05).toFixed(2);
+                document.getElementById('metric-cache-hit').innerText = Math.floor(Math.random() * 5) + 94;
+                document.getElementById('metric-docker').innerText = Math.floor(Math.random() * 3) + 7;
+                document.getElementById('metric-load-1').innerText = (Math.random() * 0.5 + 0.1).toFixed(2);
+                document.getElementById('metric-load-5').innerText = (Math.random() * 0.4 + 0.1).toFixed(2);
+                document.getElementById('metric-load-15').innerText = (Math.random() * 0.3 + 0.1).toFixed(2);
+                document.getElementById('metric-swap').innerText = Math.floor(Math.random() * 20);
+                document.getElementById('metric-inodes').innerText = Math.floor(Math.random() * 5) + 40;
+                document.getElementById('metric-processes').innerText = Math.floor(Math.random() * 20) + 130;
+                // Grade stays static usually or changes rarely, keeping A+
+
+                // Logs
+                const logs = ["User login: 192.168.x.x", "DB Query (12ms)", "Cache Hit", "Cron Job Executed", "API GET /status"];
+                const log = logs[Math.floor(Math.random() * logs.length)];
+                const div = document.createElement('div');
+                div.innerHTML = `<span class="text-gray-500">[${new Date().toLocaleTimeString()}]</span> ${log}`;
+                document.getElementById('log-container').prepend(div);
+                if(document.getElementById('log-container').children.length > 8) document.getElementById('log-container').lastChild.remove();
+            }, 1000);
+
+            // Graph
+            const canvas = document.getElementById('trafficChart');
+            const ctx = canvas.getContext('2d');
+            let data = new Array(50).fill(50);
+            
+            function draw() {
+                if(canvas.parentElement.offsetWidth > 0) {
+                    canvas.width = canvas.parentElement.offsetWidth;
+                    canvas.height = canvas.parentElement.offsetHeight;
+                }
+                
+                data.push(Math.random() * canvas.height * 0.8 + 10);
+                data.shift();
+                
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.moveTo(0, data[0]);
+                
+                const step = canvas.width / (data.length - 1);
+                for(let i=1; i<data.length; i++) ctx.lineTo(i*step, data[i]);
+                
+                ctx.strokeStyle = '#22d3ee';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.lineTo(0, canvas.height);
+                const grad = ctx.createLinearGradient(0,0,0,canvas.height);
+                grad.addColorStop(0, 'rgba(34,211,238,0.2)');
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.fill();
+                
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function liveStats() {
+           // Helper to init live stats if needed immediately on load, though tab switch handles it
+           startAnalytics();
+        }
+
+    
+        // --- COMMANDS DATABASE ---
+        const commandsDB = [
+            // LINUX
+            { cat: 'linux', title: 'Update System', code: 'sudo apt update && sudo apt upgrade -y', desc: 'Update and upgrade all packages' },
+            { cat: 'linux', title: 'Check Disk Usage', code: 'df -h', desc: 'Show disk space usage' },
+            { cat: 'linux', title: 'Check Memory Usage', code: 'free -h', desc: 'Show memory usage' },
+            { cat: 'linux', title: 'List Files', code: 'ls -la', desc: 'List all files with details' },
+            { cat: 'linux', title: 'Find Files', code: 'find /path -name "filename"', desc: 'Find files by name' },
+            { cat: 'linux', title: 'Search in Files', code: 'grep -r "pattern" /path', desc: 'Recursively search for pattern' },
+            { cat: 'linux', title: 'Process List', code: 'ps aux', desc: 'List all running processes' },
+            { cat: 'linux', title: 'Kill Process', code: 'kill -9 PID', desc: 'Force kill process by ID' },
+            { cat: 'linux', title: 'Top Processes', code: 'top', desc: 'Show top CPU consuming processes' },
+            { cat: 'linux', title: 'System Info', code: 'uname -a', desc: 'Show system information' },
+            { cat: 'linux', title: 'Check Network', code: 'netstat -tuln', desc: 'Show network connections' },
+            { cat: 'linux', title: 'Check Listening Ports', code: 'ss -tuln', desc: 'Show listening ports' },
+            { cat: 'linux', title: 'File Permissions', code: 'chmod 755 filename', desc: 'Change file permissions' },
+            { cat: 'linux', title: 'Change Owner', code: 'chown user:group filename', desc: 'Change file owner' },
+            { cat: 'linux', title: 'Create Directory', code: 'mkdir -p /path/to/dir', desc: 'Create directory with parent directories' },
+            { cat: 'linux', title: 'Remove Directory', code: 'rm -rf directory', desc: 'Remove directory and contents' },
+            { cat: 'linux', title: 'Copy Files', code: 'cp -r source destination', desc: 'Copy files recursively' },
+            { cat: 'linux', title: 'Move Files', code: 'mv source destination', desc: 'Move or rename files' },
+            { cat: 'linux', title: 'Compress Files', code: 'tar -czf archive.tar.gz folder/', desc: 'Create compressed archive' },
+            { cat: 'linux', title: 'Extract Archive', code: 'tar -xzf archive.tar.gz', desc: 'Extract compressed archive' },
+            { cat: 'linux', title: 'Check File Type', code: 'file filename', desc: 'Determine file type' },
+            { cat: 'linux', title: 'Count Lines', code: 'wc -l filename', desc: 'Count lines in file' },
+            { cat: 'linux', title: 'View File Beginning', code: 'head -n 10 filename', desc: 'Show first 10 lines of file' },
+            { cat: 'linux', title: 'View File End', code: 'tail -n 10 filename', desc: 'Show last 10 lines of file' },
+            { cat: 'linux', title: 'Follow File', code: 'tail -f filename', desc: 'Follow file as it grows' },
+            { cat: 'linux', title: 'Sort Lines', code: 'sort filename', desc: 'Sort lines in file' },
+            { cat: 'linux', title: 'Remove Duplicates', code: 'sort filename | uniq', desc: 'Remove duplicate lines' },
+            { cat: 'linux', title: 'Count Words', code: 'wc -w filename', desc: 'Count words in file' },
+            { cat: 'linux', title: 'Replace Text', code: 'sed "s/old/new/g" filename', desc: 'Replace text in file' },
+            { cat: 'linux', title: 'Find Text', code: 'grep "pattern" filename', desc: 'Find pattern in file' },
+            { cat: 'linux', title: 'Archive Files', code: 'tar -cf archive.tar files', desc: 'Create uncompressed archive' },
+            { cat: 'linux', title: 'Compress Gzip', code: 'gzip filename', desc: 'Compress file with gzip' },
+            
+            // VPS
+            { cat: 'vps', title: 'Check System Load', code: 'uptime', desc: 'Show system uptime and load' },
+            { cat: 'vps', title: 'Check CPU Info', code: 'lscpu', desc: 'Display CPU information' },
+            { cat: 'vps', title: 'Check RAM Info', code: 'lsmem', desc: 'Display memory information' },
+            { cat: 'vps', title: 'Check Disk Info', code: 'lsblk', desc: 'List block devices' },
+            { cat: 'vps', title: 'Check Network Info', code: 'ip addr', desc: 'Show network interface information' },
+            { cat: 'vps', title: 'Check Network Stats', code: 'nload', desc: 'Monitor network traffic' },
+            { cat: 'vps', title: 'Restart Network', code: 'sudo systemctl restart networking', desc: 'Restart network service' },
+            { cat: 'vps', title: 'Check Firewall', code: 'sudo ufw status', desc: 'Show firewall status' },
+            { cat: 'vps', title: 'Enable Firewall', code: 'sudo ufw enable', desc: 'Enable firewall' },
+            { cat: 'vps', title: 'Allow Port', code: 'sudo ufw allow 80', desc: 'Allow specific port' },
+            { cat: 'vps', title: 'Check SSH Status', code: 'sudo systemctl status ssh', desc: 'Check SSH service status' },
+            { cat: 'vps', title: 'Restart SSH', code: 'sudo systemctl restart ssh', desc: 'Restart SSH service' },
+            { cat: 'vps', title: 'Check Cron Jobs', code: 'crontab -l', desc: 'List scheduled cron jobs' },
+            { cat: 'vps', title: 'System Logs', code: 'journalctl -u service_name', desc: 'View system logs for service' },
+            { cat: 'vps', title: 'Check Users', code: 'who', desc: 'Show logged in users' },
+            { cat: 'vps', title: 'Add User', code: 'sudo adduser username', desc: 'Add new user' },
+            { cat: 'vps', title: 'Delete User', code: 'sudo deluser username', desc: 'Delete user' },
+            { cat: 'vps', title: 'Check Process I/O', code: 'iotop', desc: 'Monitor I/O usage by process' },
+            { cat: 'vps', title: 'Check Bandwidth', code: 'vnstat', desc: 'Show network bandwidth statistics' },
+            { cat: 'vps', title: 'Check Open Files', code: 'lsof', desc: 'List open files' },
+            
+            // DOCKER
+            { cat: 'docker', title: 'List Containers', code: 'docker ps -a', desc: 'List all containers' },
+            { cat: 'docker', title: 'List Images', code: 'docker images', desc: 'List all images' },
+            { cat: 'docker', title: 'Run Container', code: 'docker run -d -p 80:80 image_name', desc: 'Run container in detached mode' },
+            { cat: 'docker', title: 'Stop Container', code: 'docker stop container_id', desc: 'Stop running container' },
+            { cat: 'docker', title: 'Start Container', code: 'docker start container_id', desc: 'Start stopped container' },
+            { cat: 'docker', title: 'Remove Container', code: 'docker rm container_id', desc: 'Remove container' },
+            { cat: 'docker', title: 'Remove Image', code: 'docker rmi image_id', desc: 'Remove image' },
+            { cat: 'docker', title: 'Build Image', code: 'docker build -t image_name .', desc: 'Build image from Dockerfile' },
+            { cat: 'docker', title: 'Pull Image', code: 'docker pull image_name', desc: 'Pull image from registry' },
+            { cat: 'docker', title: 'Push Image', code: 'docker push image_name', desc: 'Push image to registry' },
+            { cat: 'docker', title: 'Container Logs', code: 'docker logs container_id', desc: 'View container logs' },
+            { cat: 'docker', title: 'Exec Command', code: 'docker exec -it container_id /bin/bash', desc: 'Execute command in running container' },
+            { cat: 'docker', title: 'Docker Stats', code: 'docker stats', desc: 'Show container resource usage' },
+            { cat: 'docker', title: 'System Info', code: 'docker info', desc: 'Show Docker system information' },
+            { cat: 'docker', title: 'Docker Version', code: 'docker --version', desc: 'Show Docker version' },
+            { cat: 'docker', title: 'Compose Up', code: 'docker-compose up -d', desc: 'Start services with Docker Compose' },
+            { cat: 'docker', title: 'Compose Down', code: 'docker-compose down', desc: 'Stop services with Docker Compose' },
+            { cat: 'docker', title: 'System Prune', code: 'docker system prune', desc: 'Remove unused Docker objects' },
+            { cat: 'docker', title: 'Volume List', code: 'docker volume ls', desc: 'List Docker volumes' },
+            { cat: 'docker', title: 'Network List', code: 'docker network ls', desc: 'List Docker networks' },
+            { cat: 'docker', title: 'Volume Create', code: 'docker volume create volume_name', desc: 'Create named volume' },
+            
+            // GIT
+            { cat: 'git', title: 'Initialize Repo', code: 'git init', desc: 'Initialize new Git repository' },
+            { cat: 'git', title: 'Clone Repo', code: 'git clone url', desc: 'Clone repository from URL' },
+            { cat: 'git', title: 'Check Status', code: 'git status', desc: 'Show repository status' },
+            { cat: 'git', title: 'Add Files', code: 'git add .', desc: 'Add all files to staging' },
+            { cat: 'git', title: 'Commit Changes', code: 'git commit -m "message"', desc: 'Commit staged changes' },
+            { cat: 'git', title: 'Push Changes', code: 'git push origin branch', desc: 'Push changes to remote' },
+            { cat: 'git', title: 'Pull Changes', code: 'git pull origin branch', desc: 'Pull changes from remote' },
+            { cat: 'git', title: 'Create Branch', code: 'git branch branch_name', desc: 'Create new branch' },
+            { cat: 'git', title: 'Switch Branch', code: 'git checkout branch_name', desc: 'Switch to branch' },
+            { cat: 'git', title: 'Create & Switch', code: 'git checkout -b branch_name', desc: 'Create and switch to new branch' },
+            { cat: 'git', title: 'Merge Branch', code: 'git merge branch_name', desc: 'Merge branch into current' },
+            { cat: 'git', title: 'View Log', code: 'git log', desc: 'Show commit history' },
+            { cat: 'git', title: 'Log Compact', code: 'git log --oneline', desc: 'Show compact commit history' },
+            { cat: 'git', title: 'Diff Changes', code: 'git diff', desc: 'Show unstaged changes' },
+            { cat: 'git', title: 'Diff Staged', code: 'git diff --staged', desc: 'Show staged changes' },
+            { cat: 'git', title: 'Undo Last Commit', code: 'git reset --soft HEAD~1', desc: 'Undo last commit but keep changes' },
+            { cat: 'git', title: 'Remove from Staging', code: 'git reset HEAD filename', desc: 'Remove file from staging' },
+            { cat: 'git', title: 'Remove from Repo', code: 'git rm filename', desc: 'Remove file from repository' },
+            { cat: 'git', title: 'Tag Version', code: 'git tag v1.0.0', desc: 'Create tag for version' },
+            { cat: 'git', title: 'Push Tags', code: 'git push origin --tags', desc: 'Push tags to remote' },
+            
+            // NETWORKING
+            { cat: 'networking', title: 'Ping Host', code: 'ping hostname', desc: 'Test network connectivity' },
+            { cat: 'networking', title: 'Trace Route', code: 'traceroute hostname', desc: 'Trace network path' },
+            { cat: 'networking', title: 'DNS Lookup', code: 'nslookup hostname', desc: 'Lookup DNS information' },
+            { cat: 'networking', title: 'Detailed DNS', code: 'dig hostname', desc: 'Detailed DNS lookup' },
+            { cat: 'networking', title: 'Check Port', code: 'telnet hostname port', desc: 'Test port connectivity' },
+            { cat: 'networking', title: 'Check Port 2', code: 'nc -zv hostname port', desc: 'Netcat port check' },
+            { cat: 'networking', title: 'Download File', code: 'wget url', desc: 'Download file from URL' },
+            { cat: 'networking', title: 'Download File 2', code: 'curl url', desc: 'Download file with curl' },
+            { cat: 'networking', title: 'Download to File', code: 'curl -o filename url', desc: 'Download and save to file' },
+            { cat: 'networking', title: 'HTTP Request', code: 'curl -X GET url', desc: 'Make HTTP GET request' },
+            { cat: 'networking', title: 'HTTP POST', code: 'curl -X POST -d "data" url', desc: 'Make HTTP POST request' },
+            { cat: 'networking', title: 'Check Interfaces', code: 'ifconfig', desc: 'Show network interfaces' },
+            { cat: 'networking', title: 'Check Interfaces 2', code: 'ip addr show', desc: 'Show network interfaces (modern)' },
+            { cat: 'networking', title: 'Configure Interface', code: 'sudo ifconfig eth0 192.168.1.100', desc: 'Set IP address for interface' },
+            { cat: 'networking', title: 'Add Route', code: 'sudo route add default gw 192.168.1.1', desc: 'Add default gateway' },
+            { cat: 'networking', title: 'Check ARP Table', code: 'arp -a', desc: 'Show ARP table' },
+            { cat: 'networking', title: 'Flush DNS', code: 'sudo systemctl restart systemd-resolved', desc: 'Restart DNS resolver' },
+            { cat: 'networking', title: 'Check Listening Ports', code: 'sudo netstat -tulnp', desc: 'Show listening ports with process' },
+            { cat: 'networking', title: 'Speed Test', code: 'speedtest-cli', desc: 'Test network speed' },
+            { cat: 'networking', title: 'Network Monitor', code: 'iftop', desc: 'Monitor network traffic' },
+            
+            // SYSTEM
+            { cat: 'system', title: 'Check Date', code: 'date', desc: 'Show current date and time' },
+            { cat: 'system', title: 'Set Date', code: 'sudo date -s "YYYY-MM-DD HH:MM:SS"', desc: 'Set system date and time' },
+            { cat: 'system', title: 'Check Timezone', code: 'timedatectl', desc: 'Show system time and date settings' },
+            { cat: 'system', title: 'Set Timezone', code: 'sudo timedatectl set-timezone Region/City', desc: 'Set system timezone' },
+            { cat: 'system', title: 'Check Uptime', code: 'uptime', desc: 'Show system uptime' },
+            { cat: 'system', title: 'Shutdown', code: 'sudo shutdown -h now', desc: 'Shutdown system immediately' },
+            { cat: 'system', title: 'Reboot', code: 'sudo reboot', desc: 'Reboot system' },
+            { cat: 'system', title: 'Check Services', code: 'systemctl list-units --type=service', desc: 'List all services' },
+            { cat: 'system', title: 'Start Service', code: 'sudo systemctl start service_name', desc: 'Start a service' },
+            { cat: 'system', title: 'Stop Service', code: 'sudo systemctl stop service_name', desc: 'Stop a service' },
+            { cat: 'system', title: 'Restart Service', code: 'sudo systemctl restart service_name', desc: 'Restart a service' },
+            { cat: 'system', title: 'Enable Service', code: 'sudo systemctl enable service_name', desc: 'Enable service at boot' },
+            { cat: 'system', title: 'Disable Service', code: 'sudo systemctl disable service_name', desc: 'Disable service at boot' },
+            { cat: 'system', title: 'Check Service Status', code: 'systemctl status service_name', desc: 'Check service status' },
+            { cat: 'system', title: 'Check Cron', code: 'crontab -l', desc: 'List user cron jobs' },
+            { cat: 'system', title: 'Edit Cron', code: 'crontab -e', desc: 'Edit user cron jobs' },
+            { cat: 'system', title: 'Check Processes', code: 'ps aux | grep process_name', desc: 'Find specific process' },
+            { cat: 'system', title: 'Kill by Name', code: 'sudo pkill process_name', desc: 'Kill process by name' },
+            { cat: 'system', title: 'Check Disk Usage', code: 'du -sh /path', desc: 'Show disk usage for directory' },
+            { cat: 'system', title: 'Find Large Files', code: 'find /path -type f -size +100M', desc: 'Find files larger than 100MB' },
+            
+            // USEFUL & MISC (From list)
+            { cat: 'useful', title: 'Update All', code: 'apt update && apt upgrade -y', desc: 'Update system' },
+            { cat: 'useful', title: 'Install Basic', code: 'apt install curl wget git sudo -y', desc: 'Install essentials' },
+            { cat: 'useful', title: 'Set Timezone', code: 'timedatectl set-timezone Asia/Kolkata', desc: 'Set timezone to IST' },
+            { cat: 'useful', title: 'Change Hostname', code: 'hostnamectl set-hostname myserver', desc: 'Change hostname' },
+            { cat: 'useful', title: 'Clear Cache', code: 'sync; echo 3 > /proc/sys/vm/drop_caches', desc: 'Clear RAM cache' },
+            { cat: 'useful', title: 'Watch Command', code: 'watch -n 1 "command"', desc: 'Run command every second' },
+            
+            // MORE LINUX
+            { cat: 'linux', title: 'Find Executable', code: 'which command', desc: 'Find location of executable' },
+            { cat: 'linux', title: 'Command History', code: 'history', desc: 'Show command history' },
+            { cat: 'linux', title: 'Create Link', code: 'ln -s source target', desc: 'Create symbolic link' },
+            { cat: 'linux', title: 'Disk Free', code: 'df -h', desc: 'Disk free space' },
+            { cat: 'linux', title: 'Watch Command', code: 'watch -n 1 "command"', desc: 'Run command every second' },
+            { cat: 'linux', title: 'User ID', code: 'id', desc: 'Show user IDs' },
+            { cat: 'linux', title: 'Who Am I', code: 'whoami', desc: 'Show current user' },
+            
+            // MORE SYSTEM
+            { cat: 'system', title: 'CPU Temp', code: 'sensors | grep -i temp', desc: 'Check CPU temperature' },
+            { cat: 'system', title: 'System Stats', code: 'dstat', desc: 'Comprehensive system statistics' },
+            { cat: 'system', title: 'Monitor Processes', code: 'htop', desc: 'Interactive process viewer' },
+            { cat: 'system', title: 'Open Ports', code: 'ss -tuln', desc: 'Show listening ports' },
+            
+            // MORE DOCKER
+            { cat: 'docker', title: 'Docker Events', code: 'docker events', desc: 'Monitor Docker events' },
+            { cat: 'docker', title: 'Docker Top', code: 'docker top container', desc: 'Show running processes in container' },
+            { cat: 'docker', title: 'Docker Port', code: 'docker port container', desc: 'Show port mapping' },
+            { cat: 'docker', title: 'Prune System', code: 'docker system prune -a', desc: 'Clean up unused data' },
+            
+            // MORE GIT
+            { cat: 'git', title: 'Log Graph', code: 'git log --oneline --graph --all', desc: 'Show log as graph' },
+            { cat: 'git', title: 'Log Author', code: 'git log --author="name"', desc: 'Show commits by author' },
+            { cat: 'git', title: 'Stash List', code: 'git stash list', desc: 'List all stashes' },
+            { cat: 'git', title: 'Remote URL', code: 'git remote -v', desc: 'Show remote URLs' },
+            
+            // MORE NETWORKING
+            { cat: 'networking', title: 'Public IP', code: 'curl ifconfig.me', desc: 'Get public IP' },
+            { cat: 'networking', title: 'Port Scan', code: 'nmap -p 1-1000 host', desc: 'Scan ports 1-1000' },
+            { cat: 'networking', title: 'SSL Check', code: 'openssl s_client -connect host:443', desc: 'Check SSL certificate' },
+            { cat: 'networking', title: 'Whois', code: 'whois domain.com', desc: 'Get domain info' },
+
+            // AUTO (Automation & Scheduling)
+            { cat: 'auto', title: 'Edit Cron', code: 'crontab -e', desc: 'Edit cron jobs for automation' },
+            { cat: 'auto', title: 'List Cron Jobs', code: 'crontab -l', desc: 'List scheduled tasks' },
+            { cat: 'auto', title: 'Watch Command', code: 'watch -n 5 "ls -la"', desc: 'Auto-refresh command output' },
+            { cat: 'auto', title: 'Auto Remove', code: 'apt autoremove -y', desc: 'Automatically remove unused packages' },
+            { cat: 'auto', title: 'Unattended Upgrades', code: 'dpkg-reconfigure --priority=low unattended-upgrades', desc: 'Enable automatic security updates' },
+            { cat: 'auto', title: 'Systemd Timer', code: 'systemctl list-timers', desc: 'List active systemd timers' },
+            { cat: 'auto', title: 'Auto Heal Docker', code: 'docker run -d --name autoheal jasonboyle/docker-autoheal', desc: 'Restart unhealthy containers' },
+            { cat: 'auto', title: 'Log Rotate', code: 'logrotate -f /etc/logrotate.conf', desc: 'Force log rotation manually' },
+            { cat: 'auto', title: 'Ansible Playbook', code: 'ansible-playbook site.yml', desc: 'Run automation playbook' },
+            { cat: 'auto', title: 'Terraform Apply', code: 'terraform apply -auto-approve', desc: 'Auto-provision infrastructure' },
+
+            // REVIEW (Code & Log Review)
+            { cat: 'review', title: 'Git Diff', code: 'git diff HEAD~1 HEAD', desc: 'Review changes between commits' },
+            { cat: 'review', title: 'ShellCheck', code: 'shellcheck script.sh', desc: 'Review shell script for errors' },
+            { cat: 'review', title: 'NPM Audit', code: 'npm audit', desc: 'Review Node.js dependencies for vulnerabilities' },
+            { cat: 'review', title: 'Docker Scan', code: 'docker scan image_name', desc: 'Review Docker image security' },
+            { cat: 'review', title: 'Log Review', code: 'journalctl -p err -b', desc: 'Review system boot errors' },
+            { cat: 'review', title: 'Lynis Audit', code: 'lynis audit system', desc: 'Full system security review' },
+            { cat: 'review', title: 'Check Open Ports', code: 'netstat -tulpn', desc: 'Review listening ports' },
+            { cat: 'review', title: 'Disk Usage Review', code: 'ncdu /', desc: 'Interactive disk usage review' },
+            { cat: 'review', title: 'Git Blame', code: 'git blame filename', desc: 'Review who changed code lines' },
+            { cat: 'review', title: 'Check Permissions', code: 'namei -l /path/to/file', desc: 'Review full path permissions' },
+
+            // SUGGESTION (Optimization & Tips)
+            { cat: 'suggestion', title: 'Tuned Recommend', code: 'tuned-adm recommend', desc: 'Suggest system tuning profile' },
+            { cat: 'suggestion', title: 'MySQL Tuner', code: 'mysqltuner', desc: 'Suggest MySQL optimizations' },
+            { cat: 'suggestion', title: 'Check Updates', code: '/usr/lib/update-notifier/apt-check --human-readable', desc: 'Suggest pending updates' },
+            { cat: 'suggestion', title: 'Memory Suggestion', code: 'vmstat -s', desc: 'Analyze memory stats for tuning' },
+            { cat: 'suggestion', title: 'Power Top', code: 'powertop --auto-tune', desc: 'Suggest and apply power saving' },
+            { cat: 'suggestion', title: 'HTOP', code: 'htop', desc: 'Visual process management suggestion' },
+            { cat: 'suggestion', title: 'Docker Prune', code: 'docker system prune', desc: 'Suggestion to clean unused data' },
+            { cat: 'suggestion', title: 'Find Large Files', code: 'find / -xdev -type f -size +100M', desc: 'Suggest cleaning large files' },
+            { cat: 'suggestion', title: 'Check Entropy', code: 'cat /proc/sys/kernel/random/entropy_avail', desc: 'Check if RNG needs boosting' },
+            { cat: 'suggestion', title: 'Analyze Boot', code: 'systemd-analyze blame', desc: 'Suggest slow services to optimize' }
+        ];
+
+        function generateCommands() {
+            const list = document.getElementById('commands-list');
+            list.innerHTML = ''; // Clear existing
+            
+            let displayList = [...commandsDB];
+            let count = 0;
+            
+            displayList.forEach((cmd, i) => {
+                let badgeColor = 'bg-gray-700 text-gray-300';
+                if(cmd.cat === 'linux') badgeColor = 'bg-yellow-600/20 text-yellow-500 border border-yellow-600/30';
+                if(cmd.cat === 'docker') badgeColor = 'bg-blue-600/20 text-blue-500 border border-blue-600/30';
+                if(cmd.cat === 'git') badgeColor = 'bg-orange-600/20 text-orange-500 border border-orange-600/30';
+                if(cmd.cat === 'vps') badgeColor = 'bg-purple-600/20 text-purple-500 border border-purple-600/30';
+                if(cmd.cat === 'networking') badgeColor = 'bg-green-600/20 text-green-500 border border-green-600/30';
+                if(cmd.cat === 'system') badgeColor = 'bg-red-600/20 text-red-500 border border-red-600/30';
+                if(cmd.cat === 'useful') badgeColor = 'bg-cyan-600/20 text-cyan-500 border border-cyan-600/30';
+                if(cmd.cat === 'auto') badgeColor = 'bg-teal-600/20 text-teal-500 border border-teal-600/30';
+                if(cmd.cat === 'review') badgeColor = 'bg-indigo-600/20 text-indigo-500 border border-indigo-600/30';
+                if(cmd.cat === 'suggestion') badgeColor = 'bg-pink-600/20 text-pink-500 border border-pink-600/30';
+
+                html = `
+                <div class="cmd-item grid grid-cols-12 items-center p-2.5 rounded-lg text-xs text-gray-300 border border-transparent hover:border-gray-700 hover:bg-white/5 transition-all group" data-category="${cmd.cat}">
+                    <div class="col-span-2 hidden sm:block">
+                        <span class="px-2 py-0.5 rounded ${badgeColor} font-bold text-[10px] uppercase tracking-wider">${cmd.cat}</span>
+                    </div>
+                    <div class="col-span-3 font-semibold text-white truncate pr-2">${cmd.title}</div>
+                    <div class="col-span-7 sm:col-span-5 font-mono text-cyan-400/90 truncate pr-2 select-all group-hover:text-cyan-300 transition-colors" title="${cmd.desc}">${cmd.code}</div>
+                    <div class="col-span-2 text-right hidden sm:block">
+                        <button onclick="copyText('${cmd.code.replace(/'/g, "\\'")}', this)" class="text-gray-500 hover:text-white bg-gray-800 hover:bg-gray-700 p-1.5 rounded transition-colors"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>`;
+                list.innerHTML += html;
+                count++;
+            });
+            
+            document.getElementById('cmd-count').innerText = count;
+        }
+        
+        function filterCategory(category, btn) {
+            // Update Active Button Style
+            const buttons = document.querySelectorAll('.cat-btn');
+            buttons.forEach(b => {
+                b.className = 'cat-btn px-4 py-1.5 rounded-full bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 text-xs font-bold whitespace-nowrap transition-colors border border-gray-700';
+            });
+            if(btn) {
+                btn.className = 'cat-btn px-4 py-1.5 rounded-full bg-cyan-600 text-white text-xs font-bold whitespace-nowrap transition-colors border border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.3)]';
+            }
+
+            // Filter List
+            const items = document.querySelectorAll('.cmd-item');
+            let count = 0;
+            items.forEach(el => {
+                const cats = el.getAttribute('data-category');
+                if (category === 'all' || cats === category) {
+                    el.style.display = 'grid';
+                    count++;
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+            document.getElementById('cmd-count').innerText = count;
+        }
+
+        function filterCommands() {
+            const val = document.getElementById('cmdSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.cmd-item');
+            let count = 0;
+            items.forEach(el => {
+                const text = el.innerText.toLowerCase();
+                if (text.includes(val)) {
+                    el.style.display = 'grid';
+                    count++;
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+            document.getElementById('cmd-count').innerText = count;
+        }
+
+        function copyText(text, btn) {
+            navigator.clipboard.writeText(text);
+            const icon = btn.querySelector('i');
+            icon.classList.remove('fa-copy', 'fa-regular');
+            icon.classList.add('fa-check', 'fa-solid', 'text-green-400');
+            setTimeout(() => {
+                icon.classList.add('fa-copy', 'fa-regular');
+                icon.classList.remove('fa-check', 'fa-solid', 'text-green-400');
+            }, 1500);
+        }
+
+        // --- BANNER TOOL LOGIC (Existing) ---
+        function updateBanner() {
+            const canvas = document.getElementById('banner-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            const text = document.getElementById('banner-text').value;
+            const mainSize = document.getElementById('banner-main-size').value;
+            const subtext = document.getElementById('banner-subtext').value;
+            const subSize = document.getElementById('banner-sub-size').value;
+            const color1 = document.getElementById('banner-color1').value;
+            const color2 = document.getElementById('banner-color2').value;
+            const dir = document.getElementById('banner-gradient-dir').value;
+            const textColor = document.getElementById('banner-text-color').value;
+            const gridOpacity = document.getElementById('banner-grid-opacity').value / 100;
+            const showBorder = document.getElementById('banner-border-check').checked;
+            const borderColor = document.getElementById('banner-border-color').value;
+
+            let gradient;
+            if (dir === 'vertical') {
+                gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            } else if (dir === 'diagonal') {
+                gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            } else {
+                gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            }
+            
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if(gridOpacity > 0) {
+                ctx.save();
+                ctx.globalAlpha = gridOpacity;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 1;
+                const gridSize = 40;
+                for(let i=0; i<=canvas.width; i+=gridSize) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i, canvas.height); ctx.stroke(); }
+                for(let i=0; i<=canvas.height; i+=gridSize) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width, i); ctx.stroke(); }
+                ctx.restore();
+            }
+
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.save();
+            ctx.font = `bold ${mainSize}px Inter, sans-serif`;
+            ctx.shadowColor = 'rgba(0,0,0,0.6)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetY = 4;
+            ctx.fillText(text, canvas.width/2, canvas.height/2 - (parseInt(subSize)/2));
+            ctx.restore();
+            
+            ctx.save();
+            ctx.font = `${subSize}px Inter, sans-serif`;
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 5;
+            ctx.shadowOffsetY = 2;
+            ctx.fillText(subtext, canvas.width/2, canvas.height/2 + (parseInt(mainSize)/2) + 5);
+            ctx.restore();
+            
+            if (showBorder) {
+                ctx.strokeStyle = borderColor;
+                ctx.lineWidth = 10;
+                ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function downloadBanner() {
+            const canvas = document.getElementById('banner-canvas');
+            const link = document.createElement('a');
+            link.download = 'codinghub-banner.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // --- LOGO TOOL LOGIC (NEW) ---
+        let currentLogoMode = 'text';
+
+        function setLogoMode(mode) {
+            currentLogoMode = mode;
+            document.getElementById('logo-input-text-container').classList.toggle('hidden', mode !== 'text');
+            document.getElementById('logo-input-icon-container').classList.toggle('hidden', mode !== 'icon');
+            document.getElementById('logo-font-container').classList.toggle('hidden', mode !== 'text');
+            
+            // Toggle active style
+            const btnText = document.getElementById('logo-mode-text');
+            const btnIcon = document.getElementById('logo-mode-icon');
+            
+            if(mode === 'text') {
+                btnText.className = 'flex-1 py-1.5 rounded bg-pink-600 text-white text-xs font-bold transition-all';
+                btnIcon.className = 'flex-1 py-1.5 rounded bg-black/40 text-gray-400 text-xs font-bold transition-all hover:text-white';
+            } else {
+                btnIcon.className = 'flex-1 py-1.5 rounded bg-pink-600 text-white text-xs font-bold transition-all';
+                btnText.className = 'flex-1 py-1.5 rounded bg-black/40 text-gray-400 text-xs font-bold transition-all hover:text-white';
+            }
+            updateLogo();
+        }
+
+        function setLogoShape(shape) {
+            document.getElementById('logo-shape').value = shape;
+            updateLogo();
+        }
+
+        // Icon Map for Font Awesome (Unicode values)
+        const iconMap = {
+            'code': '\uf121',     // fa-code
+            'terminal': '\uf120', // fa-terminal
+            'server': '\uf233',   // fa-server
+            'discord': '\uf392',  // fa-discord (brands)
+            'robot': '\uf544',    // fa-robot
+            'gamepad': '\uf11b',  // fa-gamepad
+            'crown': '\uf521',    // fa-crown
+            'shield': '\uf3ed'    // fa-shield-halved
+        };
+
+        function updateLogo() {
+            const canvas = document.getElementById('logo-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            const shape = document.getElementById('logo-shape').value;
+            const color1 = document.getElementById('logo-color1').value;
+            const color2 = document.getElementById('logo-color2').value;
+            const textColor = document.getElementById('logo-text-color').value;
+            const size = document.getElementById('logo-size').value;
+            const fontStyle = document.getElementById('logo-font').value;
+            const borderCheck = document.getElementById('logo-border-check').checked;
+            const borderColor = document.getElementById('logo-border-color').value;
+            const borderWidth = document.getElementById('logo-border-width').value;
+            
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Shape / Background
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            ctx.fillStyle = gradient;
+
+            ctx.beginPath();
+            if (shape === 'circle') {
+                ctx.arc(256, 256, 256, 0, Math.PI * 2);
+            } else if (shape === 'rounded') {
+                // simple rounded rect manual path for compatibility
+                const x=0, y=0, w=512, h=512, r=60;
+                ctx.moveTo(x+r, y);
+                ctx.arcTo(x+w, y, x+w, y+h, r);
+                ctx.arcTo(x+w, y+h, x, y+h, r);
+                ctx.arcTo(x, y+h, x, y, r);
+                ctx.arcTo(x, y, x+w, y, r);
+            } else {
+                ctx.rect(0, 0, 512, 512);
+            }
+            ctx.fill();
+
+            // Draw Border
+            if(borderCheck && borderWidth > 0) {
+                ctx.lineWidth = borderWidth;
+                ctx.strokeStyle = borderColor;
+                ctx.stroke();
+            }
+
+            // Draw Content
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetY = 5;
+
+            if (currentLogoMode === 'text') {
+                const text = document.getElementById('logo-text').value.toUpperCase();
+                // If Lobster or Poppins, ensure quote if needed, though value string has them
+                ctx.font = `bold ${size}px ${fontStyle}`;
+                ctx.fillText(text, 256, 256); // Centered
+            } else {
+                const iconName = document.getElementById('logo-icon-select').value;
+                const iconUnicode = iconMap[iconName];
+                
+                // Determine correct font family based on icon type (Brands vs Free)
+                let fontFace = '"Font Awesome 6 Free"';
+                if(iconName === 'discord') fontFace = '"Font Awesome 6 Brands"';
+                
+                ctx.font = `900 ${size}px ${fontFace}`;
+                ctx.fillText(iconUnicode, 256, 256);
+            }
+        }
+
+        function downloadLogo() {
+            const canvas = document.getElementById('logo-canvas');
+            const link = document.createElement('a');
+            link.download = 'codinghub-logo.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // --- INIT ---
+        window.onload = () => {
+            // liveStats(); // Handled by analytics tab trigger now
+            generateCommands(); 
+            // Ensure fonts are loaded for canvas
+            document.fonts.ready.then(() => {
+                updateBanner();
+                updateLogo();
+            });
+            // Initial trigger
+            switchTab('home');
+        };
+
+    </script>
+</body>
+</html>
